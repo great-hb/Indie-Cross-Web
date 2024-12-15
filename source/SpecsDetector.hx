@@ -1,12 +1,8 @@
 package;
 
-import cpp.ConstCharStar;
-import cpp.Native;
-import cpp.UInt64;
 import flixel.FlxG;
 import flixel.FlxState;
 import lime.app.Application;
-import openfl.system.Capabilities;
 
 #if windows
 @:headerCode("#include <windows.h>")
@@ -29,17 +25,6 @@ class SpecsDetector extends FlxState
 
 	function checkSpecs():Bool
 	{
-		var cpu:Bool = Capabilities.supports64BitProcesses; // too lazy for changing this
-		var ram:UInt64 = obtainRAM();
-
-		if (cpu && ram >= 4096)
-			return true;
-		else
-		{
-			return messageBox("INDIE CROSS",
-				"Your PC does not meet the requirements Indie Cross has.\nWhile you can still play the mod, you may experience framedrops and/or lag spikes.\n\nDo you want to play anyway?");
-		}
-
 		return true;
 	}
 
@@ -79,25 +64,4 @@ class SpecsDetector extends FlxState
     	return -1;
 	')
 	#end
-	function obtainRAM()
-	{
-		return 0;
-	}
-
-	function messageBox(title:ConstCharStar = null, msg:ConstCharStar = null)
-	{
-		#if windows
-		var msgID:Int = untyped MessageBox(null, msg, title, untyped __cpp__("MB_ICONQUESTION | MB_YESNO"));
-
-		if (msgID == 7)
-		{
-			Sys.exit(0);
-		}
-
-		return true;
-		#else
-		lime.app.Application.current.window.alert(cast msg, cast title);
-		return true;
-		#end
-	}
 }

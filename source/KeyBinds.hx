@@ -74,6 +74,16 @@ class KeyBinds
 
 
 
+		if (FlxG.save.data.killBind == null)
+		{
+			FlxG.save.data.killBind = "R";
+			trace("No killBind");
+		}
+		
+		if (StringTools.contains(FlxG.save.data.killBind, "NUMPAD"))
+			FlxG.save.data.killBind = "R";
+
+
 		if (FlxG.save.data.attackLeftBind == null)
 		{
 			FlxG.save.data.attackLeftBind = "SHIFT";

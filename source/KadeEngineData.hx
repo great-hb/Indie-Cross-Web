@@ -189,9 +189,6 @@ class KadeEngineData
 
 		if (FlxG.save.data.gamma == null)
 			FlxG.save.data.gamma = 1;
-		
-		if (FlxG.save.data.resolution == null)
-			FlxG.save.data.resolution = 5;
 
 		if (FlxG.save.data.brightness == null)
 			FlxG.save.data.brightness = 0;

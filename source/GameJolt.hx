@@ -4,7 +4,7 @@ import flixel.FlxSubState;
 import flixel.addons.ui.FlxUIInputText;
 import flash.display.BlendMode;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -55,8 +55,9 @@ class GameJoltAPI
 
 	public static function connect()
 	{
-		trace("Grabbing API keys...");
-		GJApi.init(Std.int(GJKeys.id), Std.string(GJKeys.key), false);
+		// fix later?
+		// trace("Grabbing API keys...");
+		// GJApi.init(Std.int(GJKeys.id), Std.string(GJKeys.key), false);
 	}
 
 	public static function authDaUser(in1, in2, ?loginArg:Bool = false)
@@ -199,7 +200,7 @@ class GameJoltAPI
 class GameJoltInfo extends FlxSubState
 {
 	public static var version:String = "1.0.2 Public Beta";
-	public static var fontPath:String = "assets/fonts/Bronx.otf";
+	public static var fontPath:String = Paths.font("Bronx.otf");
 }
 
 class GameJoltLogin extends MusicBeatState
@@ -757,6 +758,7 @@ class Toast extends Sprite
 
 		if (iconPath != null)
 		{
+			// fromFile doesnt work on web
 			icon = new Bitmap(BitmapData.fromFile(iconPath));
 			trace("BITMAP DATA: " + BitmapData.fromFile(iconPath));
 			icon.x = 10;

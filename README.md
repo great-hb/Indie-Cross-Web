@@ -1,8 +1,8 @@
-<!-- <p align="center">
-	<img width="600" height="600" src="art/iconOG.png"> 
-</p> -->
-
 # Friday Night Funkin': Indie Cross
+<p align="left">
+	<img width="128" height="128" src="icons/iconOG.png"> 
+</p>
+
 ## About
 FNF: Indie Cross is a massive community collaboration with the goal of bringing together an ultimate rhythm gaming experience
 
@@ -55,3 +55,18 @@ This game was made with love to Newgrounds and its community. Extra love to Tom 
 	- `haxelib git systools https://github.com/haya3218/systools`
 	- `haxelib run lime rebuild systools windows`
 	- `haxelib git tentools https://github.com/TentaRJ/tentools`
+
+# Installation (if you want to compress assets)
+1. [Install Python 3](https://www.python.org/downloads/)
+2. Install Pillow: `pip3 install Pillow`
+3. Install and add ffmpeg to your PATH (figure it out)
+
+# Build (no compression)
+1. Change `_gameSizeBytes` in `CustomPreloader.hx` so the loading bar is correct (idk how to fix)
+2. Build with lime: `lime build html5 -clean -final -Dnocompression`
+
+# Build (with compression)
+1. Compress the assets: `python compress-assets.py`
+	- Feel free to change `OGG_QUALITY` and `VIDEO_CRF` in compress-assets.py to your liking
+2. Change `_gameSizeBytes` in `CustomPreloader.hx` so the loading bar is correct (idk how to fix)
+3. Build with lime: `lime build html5 -clean -final`

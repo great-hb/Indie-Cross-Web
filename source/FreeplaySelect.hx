@@ -41,7 +41,9 @@ class FreeplaySelect extends MusicBeatState
 
 		FlxG.mouse.visible = true;
 
+		#if desktop
 		DiscordClient.changePresence("Browsing the Freeplay Select", null);
+		#end
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menu/BG', 'preload'));
 		bg.updateHitbox();

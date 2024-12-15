@@ -44,7 +44,7 @@ class DiamondTransSubState extends FlxSubState
 
         rect = new FlxSprite(0, 0);
         rect.makeGraphic(1, 1, 0xFF000000);
-        rect.scale.set(1280, 720);
+        rect.scale.set(FlxG.width, FlxG.height);
         rect.origin.set();
         rect.shader = shader;
         rect.visible = false;

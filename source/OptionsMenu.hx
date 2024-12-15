@@ -46,21 +46,23 @@ class OptionsMenu extends MusicBeatState
 			new CacheStart("Enables caching and loading of images before the game starts and songs.")
 		]),
 		new OptionCategory("Window", [
-			new Resolution("Change the game's resolution, press ENTER to apply"),
 			new Gamma("Change the gamma value of the app."),
 			new Brightness("Change the brightness value of the app."),
 			new FocusFreeze("Freeze the game when clicking off of the application."),
 			new FocusPause("Open the pause menu when clicking off of the application in a song (Only works with Focus Freeze)."),
 			new FPSCapOption("Cap your FPS"),
 			new FPSOption("Toggle the FPS Counter"),
-			new MemOption("Toggle the Memory Counter"),
-			new RainbowFPSOption("Make the FPS and Memory Counter Rainbow")
+			// removed for web
+			// new MemOption("Toggle the Memory Counter"),
+			// doesnt work?
+			// new RainbowFPSOption("Make the FPS and Memory Counter Rainbow")
 		]),
 		new OptionCategory("Accessibility", [
 			new ShowSubtitles("Show subtitles during cutscenes."),
 			new Colorblind(""),
-			new LogInGJ("Log into gamejolt for achievements & perks"),
-			new LogOutGJ("Log out of your gamejolt account")
+			// disabled in web for now
+			// new LogInGJ("Log into gamejolt for achievements & perks"),
+			// new LogOutGJ("Log out of your gamejolt account")
 		])
 	];
 

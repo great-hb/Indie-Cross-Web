@@ -1,23 +1,16 @@
 import GameJolt.GameJoltInfo;
-#if desktop
-import sys.io.Process;
-import sys.FileSystem;
-import sys.io.File;
-#end
 import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import lime.utils.Assets;
-import openfl.display.BitmapData;
-import sys.thread.Thread;
 
 using StringTools;
 
 class HelperFunctions
 {
-	public static var difficultyArray:Array<String> = ['Easy', "Normal", "Hard"];
+	public static var difficultyArray:Array<String> = ["Easy", "Normal", "Hard"];
 
 	public static var v1Songs:Array<String> = [
 		'snake-eyes', 'technicolor-tussle', 'knockout', 'satanic-funkin',
@@ -313,128 +306,46 @@ class HelperFunctions
 
 	public static function checkExistingChart(song:String, poop:String)
 	{
-		if (Main.hiddenSongs.contains(song.toLowerCase()))
+		var songLower:String = song.toLowerCase();
+		var poopLower:String = poop.toLowerCase();
+		var jsonPath:String = 'assets/data/' + songLower + '/' + poopLower + '.json';
+
+		if (Main.hiddenSongs.contains(songLower))
 		{
-			PlayState.SONG = Song.loadFromJson(poop, song.toLowerCase());
+			PlayState.SONG = Song.loadFromJson(poop, songLower);
 		}
 		else
 		{
-			if (FileSystem.exists('assets/data/' + song.toLowerCase() + '/' + poop.toLowerCase() + '.json'))
+			// Check if the JSON file exists using Assets.exists
+			if (Assets.exists(Paths.json(songLower + '/' + poopLower)))
 			{
 				var json:Dynamic;
-	
+
 				try
 				{
-					json = Assets.getText(Paths.json(song.toLowerCase() + '/' + poop.toLowerCase())).trim();
+					json = Assets.getText(Paths.json(songLower + '/' + poopLower)).trim();
 				}
-				catch (e)
+				catch (e:Dynamic)
 				{
-					trace("dang! stupid hashlink cant handle an empty file!");
+					trace("Error reading file: " + e);
 					json = null;
 				}
-	
-				if (json == null)
+
+				if (json == null || json == "")
 				{
-					trace('aw fuck its null');
+					trace('JSON is null or empty');
 					createFakeSong(song);
 				}
 				else
 				{
-					trace('found file');
-					PlayState.SONG = Song.loadFromJson(poop, song.toLowerCase());
+					PlayState.SONG = Song.loadFromJson(poop, songLower);
 				}
 			}
 			else
 			{
-				trace('aw fuck its null');
+				trace('File not found');
 				createFakeSong(song);
 			}
-		}
-	}
-
-	
-	public static function isRecording():Bool
-	{
-		var programList:Array<String> = 
-		[
-			'obs32',
-			'obs64',
-			'streamlabs obs',
-			'bdcam',
-			'fraps',
-			'xsplit', // TIL c# program
-			'hycam2', // hueh
-			'twitchstudio' // why
-		];
-
-		var taskList:Process = new Process('tasklist', []);
-		var readableList:String = taskList.stdout.readAll().toString().toLowerCase();
-		var isOBS:Bool = false;
-
-		for (i in 0...programList.length)
-		{
-			if (readableList.contains(programList[i]))
-			{
-				trace('found ' + programList[i]);
-				isOBS = true;
-			}
-			else
-			{
-				trace('didnt find anything');
-			}
-		}
-
-		taskList.close();
-		readableList = '';
-
-		return isOBS;
-	}
-
-	public static function instExists(song:String):Bool
-	{
-		if (FileSystem.exists('assets/songs/' + song.toLowerCase() + '/Inst.ogg'))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public static function vocalExists(song:String):Bool
-	{
-		if (FileSystem.exists('assets/songs/' + song.toLowerCase() + '/Voices.ogg'))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public static function instEasyExists(song:String):Bool
-	{
-		if (FileSystem.exists('assets/songs/' + song.toLowerCase() + '/Inst-easy.ogg'))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public static function vocalEasyExists(song:String):Bool
-	{
-		if (FileSystem.exists('assets/songs/' + song.toLowerCase() + '/Voices-easy.ogg'))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
 		}
 	}
 
@@ -518,16 +429,5 @@ class HelperFunctions
 		}
 
 		return font;
-	}
-
-	/**
-	 * Gets image that didn't exist during compiling
-	 * 
-	 * Usage: **HelperFunctions.getSparrowAtlas(path);**
-	 * @param path The path to the image
-	 */
-	public static function getSparrowAtlas(path:String):FlxAtlasFrames
-	{
-		return FlxAtlasFrames.fromSparrow(FlxGraphic.fromBitmapData(BitmapData.fromFile(path + ".png")), File.getContent(path + ".xml"));
 	}
 }

@@ -2,10 +2,6 @@
 package;
 
 import offsetMenus.DiffButtonOffsets;
-#if desktop
-import sys.io.File;
-import sys.FileSystem;
-#end
 import flixel.FlxObject;
 import openfl.utils.Object;
 import offsetMenus.NotesplashOffsets;
@@ -296,7 +292,9 @@ class MainMenuState extends MusicBeatState
 		FlxG.mouse.visible = true;
 
 		Application.current.window.title = Main.appTitle;
+		#if cpp
 		DiscordClient.changePresence("In the Menus", null);
+		#end
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menu/BG', 'preload'));
 		bg.updateHitbox();
@@ -330,52 +328,9 @@ class MainMenuState extends MusicBeatState
 		#if debug
 		versionText.text = name + " v." + version + " commit " + commitHash;
 		#end
+		// web version
+		versionText.text += '-web';
 		add(versionText);
-
-		if (!FlxG.save.data.stopGJ && !GameJoltAPI.getStatus())
-		{
-			if (!Main.logAsked)
-			{
-				new FlxTimer().start(0.4, function(_:FlxTimer)
-				{				
-					loginScreen = new LoginScreen(controls);
-					loginScreen.onClosed = function()
-					{
-						loginScreen.destroy();
-						loginScreen = null;
-						disableInput = false;
-					};
-					add(loginScreen);
-
-					disableInput = true;
-					Main.logAsked = true;
-				});
-			}
-		}
-		else
-		{
-			if (GameJoltAPI.getStatus() && !Main.logAsked)
-			{
-				Main.gjToastManager.createToast("assets/achievements/images/p7.png", 'Signed in as ' + GameJoltAPI.getUserInfo(), 'Connected to GameJolt', false);
-				Main.logAsked = true;
-			}
-		}
-
-		if (GameJoltAPI.getStatus())
-		{
-			if (GameJoltAPI.betatesters.contains(GameJoltAPI.getUserInfo()))
-			{
-				versionText.text += '  //  Thanks for being a beta tester!';
-			}
-			if (GameJoltAPI.getUserInfo().contains('penkaru'))
-			{
-				versionText.text += '  //  Thanks for being penkaru!';
-			}
-			if (GameJoltAPI.getUserInfo() == 'TKTems')
-			{
-				versionText.text += '  //  Fuck you tk';
-			}
-		}
 
 		generateButtons(270, 100);
 		changeSelection(curSelected);
@@ -425,27 +380,6 @@ class MainMenuState extends MusicBeatState
 		soundX = FlxG.width/2;
 		ear = new FlxObject();
 		ear.setPosition(soundX, FlxG.height/2);
-
-		/*var username:String = 'user';
-		if (GameJoltAPI.getStatus())
-		{
-			username = GameJoltAPI.getUserInfo();
-		}
-		else
-		{
-			username = HelperFunctions.getUsername();
-		}
-		trace(username);
-
-		if (FileSystem.exists('./assets/data/user.txt'))
-		{
-			trace('user text found');
-		}
-		else
-		{
-			trace('user text not found');
-			File.saveContent('./assets/data/user.txt', username);
-		}*/
 
 		//shitty fix (im sorry ppl who played the broken build)
 					if (!FlxG.save.data.secretChars[0] && !FlxG.save.data.secretChars[1] && !FlxG.save.data.secretChars[2] 

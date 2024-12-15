@@ -10,7 +10,7 @@ import flixel.effects.FlxFlicker;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.math.FlxMath;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -23,7 +23,6 @@ import openfl.media.Sound;
 import openfl.media.SoundChannel;
 import openfl.media.SoundTransform;
 import openfl.utils.Assets;
-import sys.thread.Thread;
 import flixel.input.keyboard.FlxKey;
 
 using StringTools;
@@ -200,7 +199,7 @@ class FreeplayState extends MusicBeatState
 
 		music = new MikuSoundSystem();
 		music.changeVolume(FlxG.sound.volume);
-		FlxG.sound.volumeHandler = onVChange;
+		FlxG.sound.onVolumeChange.add(onVChange);
 
 		FlxG.game.filtersEnabled = true;
 		filters.push(chromaticAberration);
@@ -331,10 +330,10 @@ class FreeplayState extends MusicBeatState
 		{
 			cupTea.alpha = 1;
 			cupTea.animation.play('start', true);
-			cupTea.animation.finishCallback = function(name)
+			cupTea.animation.onFinish.add(function(name)
 			{
 				cupTea.alpha = 0.00001;
-			}
+			});
 		}
 		else
 		{
@@ -997,8 +996,10 @@ class FreeplayState extends MusicBeatState
 				if (HelperFunctions.shouldBeHidden(songs[curSelected[freeplayType]].songName.toLowerCase()))
 					listenin = 'Freeplay - Listening to SOMETHING NEW :)';
 					
+				#if cpp
 				DiscordClient.changePresence(listenin, null);
-	
+				#end
+
 				music.stop();
 	
 				waitshit.cancel();

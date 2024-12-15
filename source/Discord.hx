@@ -1,7 +1,9 @@
 package;
 
 import flixel.FlxG;
+#if desktop
 import Sys.sleep;
+#end
 
 using StringTools;
 

@@ -15,22 +15,15 @@ import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
-import openfl.events.UncaughtErrorEvent;
 import openfl.system.System;
 import openfl.utils.Assets;
-import sys.FileSystem;
-import sys.io.File;
-import sys.io.Process;
 
 #if debug
 // import flixel.addons.studio.FlxStudio;
 #end
 class Main extends Sprite
 {
-	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
-	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var initialState:Class<FlxState> = SpecsDetector; // The FlxState the game starts with.
-	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var framerate:Int = 120; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
@@ -75,8 +68,6 @@ class Main extends Sprite
 	{
 		super();
 
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
-
 		if (stage != null)
 		{
 			init();
@@ -97,21 +88,36 @@ class Main extends Sprite
 		setupGame();
 	}
 
+	private function keepRatio(width:Int, height:Int): { width:Int, height:Int }
+	{
+		// Calculate the possible width and height based on the 16:9 ratio
+		var ratioWidth = (height * 16) / 9;
+		var ratioHeight = (width * 9) / 16;
+
+		// Check if the calculated width or height exceeds the provided limits
+		if (ratioWidth <= width)
+		{
+			return { width: Std.int(ratioWidth), height: height }; // fits within width
+		}
+		else
+		{
+			return { width: width, height: Std.int(ratioHeight) }; // fits within height
+		}
+	}
+
 	private function setupGame():Void
 	{
-		var stageWidth:Int = Lib.current.stage.stageWidth;
-		var stageHeight:Int = Lib.current.stage.stageHeight;
+		var newRes = keepRatio(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
 
-		if (zoom == -1)
-		{
-			var ratioX:Float = stageWidth / gameWidth;
-			var ratioY:Float = stageHeight / gameHeight;
-			zoom = Math.min(ratioX, ratioY);
-			gameWidth = Math.ceil(stageWidth / zoom);
-			gameHeight = Math.ceil(stageHeight / zoom);
+		game = new FlxGame(newRes.width, newRes.height, initialState, framerate, framerate, skipSplash, startFullscreen);
+
+		function resizeHandler(event:Event):Void {
+			var newerRes = keepRatio(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight);
+			FlxG.resizeGame(newerRes.width, newerRes.height);
+			trace('using resolution ' + newerRes.width + 'x' +  newerRes.height);
 		}
 
-		game = new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen);
+		// FlxG.stage.addEventListener(Event.RESIZE, resizeHandler);
 
 		#if (debug && poly)
 		FlxStudio.create();
@@ -181,7 +187,7 @@ class Main extends Sprite
 			focusMusicTween = FlxTween.tween(FlxG.sound, {volume: newVol}, 0.5);
 
 			// Conserve power by lowering draw framerate when unfocuced
-			FlxG.drawFramerate = 60;
+			FlxG.drawFramerate = 30;
 		}
 	}
 
@@ -293,64 +299,5 @@ class Main extends Sprite
 	public function getFPS():Float
 	{
 		return fpsCounter.currentFPS;
-	}
-
-	function onCrash(e:UncaughtErrorEvent):Void
-	{
-		var errMsg:String = "";
-		var path:String;
-		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
-		var dateNow:String = Date.now().toString();
-
-		dateNow = StringTools.replace(dateNow, " ", "_");
-		dateNow = StringTools.replace(dateNow, ":", "'");
-
-		path = "./crash/" + "IndieCross_" + dateNow + ".txt";
-
-		errMsg = "Version: " + Lib.application.meta["version"] + "\n";
-
-		for (stackItem in callStack)
-		{
-			switch (stackItem)
-			{
-				case FilePos(s, file, line, column):
-					errMsg += file + " (line " + line + ")\n";
-				default:
-					Sys.println(stackItem);
-			}
-		}
-
-		errMsg += "\nUncaught Error: " + e.error + "\nReport the error here: https://discord.gg/cZydhxFYpp";
-
-		if (!FileSystem.exists("./crash/"))
-			FileSystem.createDirectory("./crash/");
-
-		File.saveContent(path, errMsg + "\n");
-
-		Sys.println(errMsg);
-		Sys.println("Crash dump saved in " + Path.normalize(path));
-
-		var crashDialoguePath:String = "FlixelCrashHandler";
-
-		#if windows
-		crashDialoguePath += ".exe";
-		#end
-
-		if (FileSystem.exists("./" + crashDialoguePath))
-		{
-			Sys.println("Found crash dialog: " + crashDialoguePath);
-
-			#if linux
-			crashDialoguePath = "./" + crashDialoguePath;
-			#end
-			new Process(crashDialoguePath, [path]);
-		}
-		else
-		{
-			Sys.println("No crash dialog found! Making a simple alert instead...");
-			Application.current.window.alert(errMsg, "Error!");
-		}
-
-		Sys.exit(1);
 	}
 }

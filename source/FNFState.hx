@@ -58,6 +58,7 @@ class FNFState extends FlxUIState
         super.update(elapsed);
     }
 
+    /* removed in web - idk if this is necessary, causes deprecated error
     override function switchTo(state:FlxState):Bool
     {
         if (!finishedTransOut && !transOutRequested)
@@ -78,6 +79,7 @@ class FNFState extends FlxUIState
 
         return finishedTransOut;
     }
+    */
 
     function fadeIn()
     {

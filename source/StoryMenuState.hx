@@ -283,10 +283,10 @@ class StoryMenuState extends MusicBeatState
 		{
 			cupTea.alpha = 1;
 			cupTea.animation.play('start', true);
-			cupTea.animation.finishCallback = function(name)
+			cupTea.animation.onFinish.add(function(name)
 			{
 				cupTea.alpha = 0.00001;
-			}
+			});
 		}
 		else
 		{

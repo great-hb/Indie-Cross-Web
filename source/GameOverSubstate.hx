@@ -78,10 +78,6 @@ class GameOverSubstate extends MusicBeatSubstate
 						{
 							hasVOfinished = false;
 							var maxRand:Int = 16;
-							if (HelperFunctions.isRecording())
-							{
-								maxRand = 19;
-							}
 							var random = FlxG.random.int(1, maxRand);
 
 							trace('random line: ' + random);

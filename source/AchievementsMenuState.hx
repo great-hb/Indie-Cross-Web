@@ -1,7 +1,9 @@
 package;
 
 import flixel.util.FlxTimer;
+#if cpp
 import Discord.DiscordClient;
+#end
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;

@@ -8,7 +8,7 @@ import flixel.graphics.FlxGraphic;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
-import sys.thread.Thread;
+import js.Promise;
 
 using StringTools;
 
@@ -24,6 +24,7 @@ class Caching extends MusicBeatState
 	var calledDone = false;
 	var screen:LoadingScreen;
 	var debug:Bool = false;
+	var readyToStart:Bool = false;
 
 	public function new()
 	{
@@ -69,8 +70,10 @@ class Caching extends MusicBeatState
 		Application.current.onExit.add(function(exitCode)
 		{
 			FlxG.save.flush();
+			#if cpp
 			DiscordClient.shutdown();
 			Sys.exit(0);
+			#end
 		});
 
 		FlxG.sound.muteKeys = null;
@@ -82,38 +85,6 @@ class Caching extends MusicBeatState
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.console.autoPause = false;
 		FlxG.autoPause = FlxG.save.data.focusfreeze;
-		switch (FlxG.save.data.resolution)
-		{
-			case 0:
-				FlxG.resizeWindow(640,360);
-				FlxG.resizeGame(640,360);
-			case 1:
-				FlxG.resizeWindow(768,432);
-				FlxG.resizeGame(768,432);
-			case 2:
-				FlxG.resizeWindow(896,504);
-				FlxG.resizeGame(896,504);
-			case 3:
-				FlxG.resizeWindow(640,360);
-				FlxG.resizeGame(640,360);
-			case 4:
-				FlxG.resizeWindow(1152,648);
-				FlxG.resizeGame(1152,648);
-			case 5:
-				FlxG.resizeWindow(1280,720);
-				FlxG.resizeGame(1280,720);
-			case 6:
-				FlxG.resizeWindow(1920,1080);
-				FlxG.resizeGame(1920,1080);
-			case 7:
-				FlxG.resizeWindow(2560,1440);
-				FlxG.resizeGame(2560,1440);
-			case 8:
-				FlxG.resizeWindow(3840,2160);
-				FlxG.resizeGame(3840,2160);
-
-
-		}
 
 		GameJoltAPI.connect();
 		GameJoltAPI.authDaUser(FlxG.save.data.gjUser, FlxG.save.data.gjToken);
@@ -124,14 +95,12 @@ class Caching extends MusicBeatState
 
 		if (FlxG.save.data.cachestart)
 		{
-			Thread.create(() ->
-			{
-				cache();
-			});
+			// remove thread
+			cache();
 		}
 		else
 		{
-			end();
+			initReadyToStart();
 		}
 	}
 
@@ -195,6 +164,7 @@ class Caching extends MusicBeatState
 
 		screen.setLoadingText("Loading cutscenes...");
 		
+		/* causes error in web
 		if (!debug)
 		{
 			trace('starting vid cache');
@@ -206,24 +176,33 @@ class Caching extends MusicBeatState
 			video.kill();
 			trace('finished vid cache');
 		}
+		*/
 
 		screen.progress = 9;
 
 		FlxGraphic.defaultPersist = false;
 
-		screen.setLoadingText("Done!");
 		trace("Caching done!");
 
-		end();
+		initReadyToStart();
 	}
 
-	function end()
+	function initReadyToStart()
 	{
-		FlxG.camera.fade(FlxColor.BLACK, 1, false);
-		
-		new FlxTimer().start(1, function(tmr:FlxTimer)
+		screen.setLoadingText("CLICK ANYWHERE TO START");
+		readyToStart = true;
+	}
+
+	override public function update(elapsed:Float):Void
+	{
+		if (FlxG.mouse.justPressed && readyToStart)
 		{
-			FlxG.switchState(new TitleState());
-		});
+			FlxG.camera.fade(FlxColor.BLACK, 1, false);
+			
+			new FlxTimer().start(1, function(tmr:FlxTimer)
+			{
+				FlxG.switchState(new TitleState());
+			});
+		}
 	}
 }

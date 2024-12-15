@@ -4,7 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -235,7 +235,15 @@ class GameOverCuphead extends MusicBeatSubstate
 
 		@:privateAccess
 		{
+			#if html5
+			// HTML5 doesn't allow direct access to pitch like this. Instead, use a workaround such as adjusting playback speed or other transformations
+			var soundTransform = deadMusic._channel.soundTransform;
+			soundTransform.volume = songSpeed; // You might want to adjust volume or apply another effect (since pitch change isn't supported directly in HTML5)
+			deadMusic._channel.soundTransform = soundTransform;
+			#else
+			// Native platforms can still use OpenAL to adjust pitch directly
 			AL.sourcef(deadMusic._channel.__source.__backend.handle, AL.PITCH, songSpeed);
+			#end
 		}
 
 		if (!isEnding)

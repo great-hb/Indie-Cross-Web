@@ -13,10 +13,7 @@ class SoundManager
 
 		FlxG.save.data.muted = FlxG.sound.muted;
 
-		if (FlxG.sound.volumeHandler != null)
-		{
-			FlxG.sound.volumeHandler(FlxG.sound.muted ? 0 : FlxG.sound.volume);
-		}
+		FlxG.sound.onVolumeChange.dispatch(FlxG.sound.muted ? 0 : FlxG.sound.volume);
 
 		showSoundTray();
 	}

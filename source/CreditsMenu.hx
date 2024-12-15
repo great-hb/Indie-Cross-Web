@@ -7,15 +7,13 @@ import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.input.mouse.FlxMouseEventManager;
+import flixel.input.mouse.FlxMouseEvent;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import openfl.display.BitmapData;
-import sys.Http;
-import sys.io.Process;
 
 using StringTools;
 
@@ -312,6 +310,14 @@ class CreditsMenu extends MusicBeatState
 			"Charter", 
 			"0", 
 			"https://twitter.com/cval_brown"
+		],
+
+		[
+			'Great', 
+			"Ported to HTML5", 
+			"Developer",
+			"0",
+			"https://github.com/great-hb"
 		]
 	];
 
@@ -372,6 +378,13 @@ class CreditsMenu extends MusicBeatState
 
 	var allowTransit:Bool = false;
 
+	// For the small credit icons
+	var gridColumns = 7;        // Number of columns
+	var iconSize = 102;         // The space the icons take up
+	var initialOffsetX = 17;    // Initial X offset
+	var initialOffsetY = 25;    // Initial Y offset
+	var imagePadding = 8;       // Padding space around each image
+
 	override function create()
 	{
 		super.create();
@@ -388,48 +401,42 @@ class CreditsMenu extends MusicBeatState
 
 		for (i in 0...credTypes.length)
 		{
-			var bgBitmap:BitmapData = BitmapData.fromFile(Paths.image("credits/bg/" + credTypes[i] + '_BG', "preload"));
-			bgAssets.push(bgBitmap);
+			BitmapData.loadFromFile(Paths.image("credits/bg/" + credTypes[i] + "_BG", "preload")).onComplete(function(bgBitmap:BitmapData) {
+				bgAssets[i] = bgBitmap;
+			});
 		}
 
 		for (i in 0...credits.length)
 		{
-			var bigIconAsset:BitmapData = BitmapData.fromFile(Paths.image("credits/icons/big_icons/" + credits[i][0], "preload"));
-			bigIconsAssets.push(bigIconAsset);
-			//make the small ones use the big ones just resized, saves a bit of loading time(not really)
+			var smallIcon:FlxSprite = new FlxSprite();
 
-
-			var smallIcon:FlxSprite = new FlxSprite().loadGraphic(bigIconAsset);
-			smallIcon.setGraphicSize(102,102);
-			smallIcon.updateHitbox();
-
-			if (i < 28)
-			{
-				smallIcon.x = (17 + ((i * 110) % (7 * 110)));
-				smallIcon.y = 25 + (110 * Math.ffloor(i / 7));
-			}
-			else
-			{
-				smallIcon.x = (55 + (((i - 1) * 110) % (6 * 110)));
-				smallIcon.y = 25 + (110 * (Math.ffloor((i - 4) / 6)));
-			}
+			smallIcon.x = (initialOffsetX + ((i * iconSize) % (gridColumns * iconSize)));
+			smallIcon.y = initialOffsetY + (iconSize * Math.ffloor(i / gridColumns));
 
 			add(smallIcon);
 			smallIcon.ID = i;
-			FlxMouseEventManager.add(smallIcon, null, null, hoverCallback,null,false,true,false);
+			FlxMouseEvent.add(smallIcon, null, null, hoverCallback, null, false, true, false);
 
 			credIcons.push(smallIcon);
 
-			//var bigIconAsset:BitmapData = BitmapData.fromFile(Paths.image("credits/icons/big_icons/" + credits[i][0], "preload"));
-			//bigIconsAssets.push(bigIconAsset);
+			BitmapData.loadFromFile(Paths.image("credits/icons/big_icons/" + credits[i][0], "preload")).onComplete(function(iconAsset:BitmapData) {
+				bigIconsAssets[i] = iconAsset;
+
+				smallIcon.loadGraphic(iconAsset);
+				smallIcon.setGraphicSize(iconSize-imagePadding);
+				smallIcon.updateHitbox();
+			});
 		}
 
-		selctionHighlighter = new FlxSprite(3, 11).loadGraphic(BitmapData.fromFile(Paths.image('credits/icons/selector', 'preload')));
-		selctionHighlighter.setGraphicSize(Std.int(selctionHighlighter.width * 0.7));
-		selctionHighlighter.updateHitbox();
+		selctionHighlighter = new FlxSprite(3, 11);
 		selctionHighlighter.antialiasing = FlxG.save.data.highquality;
 		selctionHighlighter.visible = false;
 		add(selctionHighlighter);
+		BitmapData.loadFromFile(Paths.image('credits/icons/selector', 'preload')).onComplete(function(bitmapData:BitmapData) {
+			selctionHighlighter.loadGraphic(bitmapData);
+			selctionHighlighter.setGraphicSize(Std.int(iconSize*1.2));
+			selctionHighlighter.updateHitbox();
+		});
 
 		bigIcon = new FlxSprite(718, -50);
 		bigIcon.scale.set(0.65, 0.65);
