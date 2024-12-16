@@ -173,17 +173,17 @@ class FreeplayState extends MusicBeatState
 				}
 			case 2:
 				{
-					if ((FlxG.save.data.weeksbeatonhard[0] && FlxG.save.data.shownalerts[0]) || MainMenuState.debugTools)
+					if (FlxG.save.data.shownalerts[0] || MainMenuState.debugTools)
 					{
 						songs.push(new SongMetadata('Devils-Gambit', 0, 'cupheadNightmare'));
 					}
 
-					if ((FlxG.save.data.weeksbeatonhard[1] && FlxG.save.data.shownalerts[1]) || MainMenuState.debugTools)
+					if (FlxG.save.data.shownalerts[1] || MainMenuState.debugTools)
 					{
 						songs.push(new SongMetadata('Bad-Time', 1, 'sansNightmare'));
 					}
 
-					if ((FlxG.save.data.weeksbeatonhard[2] && FlxG.save.data.shownalerts[2]) || MainMenuState.debugTools)
+					if (FlxG.save.data.shownalerts[2] || MainMenuState.debugTools)
 					{
 						songs.push(new SongMetadata('Despair', 2, 'bendyNightmare'));
 					}
@@ -736,7 +736,7 @@ class FreeplayState extends MusicBeatState
 
 	function accept()
 	{
-		if (!accepted)
+		if (!accepted && songs.length > 0)
 		{
 			accepted = true;
 

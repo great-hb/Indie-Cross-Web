@@ -382,24 +382,24 @@ class MainMenuState extends MusicBeatState
 		ear.setPosition(soundX, FlxG.height/2);
 
 		//shitty fix (im sorry ppl who played the broken build)
-					if (!FlxG.save.data.secretChars[0] && !FlxG.save.data.secretChars[1] && !FlxG.save.data.secretChars[2] 
-						&& !FlxG.save.data.secretChars[3] && !FlxG.save.data.secretChars[4])
-					{
-						FlxG.save.data.freeplaylocked[2] = false;
-					}
+		if (!FlxG.save.data.secretChars[0] && !FlxG.save.data.secretChars[1] && !FlxG.save.data.secretChars[2] 
+			&& !FlxG.save.data.secretChars[3] && !FlxG.save.data.secretChars[4])
+		{
+			FlxG.save.data.freeplaylocked[2] = false;
+		}
 
-					if (!FlxG.save.data.secretChars[0] && !FlxG.save.data.shownalerts[0]) //cuphead bonus
-					{
-						FlxG.save.data.shownalerts[0] = true;
-					}
-					if (!FlxG.save.data.secretChars[1] && !FlxG.save.data.secretChars[2] && !FlxG.save.data.shownalerts[1]) //sans bonus
-					{
-						FlxG.save.data.shownalerts[1] = true;
-					}
-					if (!FlxG.save.data.secretChars[3] && !FlxG.save.data.secretChars[4] && !FlxG.save.data.shownalerts[2]) //bendy bonus
-					{
-						FlxG.save.data.shownalerts[2] = true;
-					}
+		if (!FlxG.save.data.secretChars[0] && !FlxG.save.data.shownalerts[0]) //cuphead bonus
+		{
+			FlxG.save.data.shownalerts[0] = true;
+		}
+		if (!FlxG.save.data.secretChars[1] && !FlxG.save.data.secretChars[2] && !FlxG.save.data.shownalerts[1]) //sans bonus
+		{
+			FlxG.save.data.shownalerts[1] = true;
+		}
+		if (!FlxG.save.data.secretChars[3] && !FlxG.save.data.secretChars[4] && !FlxG.save.data.shownalerts[2]) //bendy bonus
+		{
+			FlxG.save.data.shownalerts[2] = true;
+		}
 	}
 
 	var soundX:Float = 0;
