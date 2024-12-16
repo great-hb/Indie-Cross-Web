@@ -10,6 +10,7 @@ from PIL import Image
 # Compression settings, change to your liking
 OGG_QUALITY = -2   # OGG audio quality (-2 = max compression, 10 = low compression)
 VIDEO_CRF = 40     # CRF for video compression (0 = low compression, 51 = max compression)
+PNG_8BIT = True    # Whether to convert PNGs to 8-bit
 
 compress_images = True
 compress_videos = True
@@ -35,7 +36,8 @@ def compress_image(file_path, output_dir):
     output_path = os.path.join(output_dir, relative_path)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    img = img.convert('P')  # Convert to 8-bit
+    if PNG_8BIT:
+        img = img.convert('P')  # Convert to 8-bit
 
     # Save the image
     img.save(output_path, 'PNG', optimize=True)
