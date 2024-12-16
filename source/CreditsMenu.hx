@@ -421,7 +421,9 @@ class CreditsMenu extends MusicBeatState
 
 			BitmapData.loadFromFile(Paths.image("credits/icons/big_icons/" + credits[i][0], "preload")).onComplete(function(iconAsset:BitmapData) {
 				bigIconsAssets[i] = iconAsset;
+			});
 
+			BitmapData.loadFromFile(Paths.image("credits/icons/small_icons/" + credits[i][0], "preload")).onComplete(function(iconAsset:BitmapData) {
 				smallIcon.loadGraphic(iconAsset);
 				smallIcon.setGraphicSize(iconSize-imagePadding);
 				smallIcon.updateHitbox();

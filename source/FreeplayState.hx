@@ -808,7 +808,7 @@ class FreeplayState extends MusicBeatState
 
 	function changeDiff(change:Int = 0, ?customName:String = '')
 	{
-		if (!accepted)
+		if (!accepted && songs.length > 0)
 		{
 			if (customName != '')
 			{
@@ -879,7 +879,7 @@ class FreeplayState extends MusicBeatState
 
 	function changeMechDiff(?change:Int = 0)
 	{
-		if (!accepted)
+		if (!accepted && songs.length > 0)
 		{
 			mechDiffBG.visible = true;
 			mechDiffTextinfo.visible = true;
@@ -931,7 +931,7 @@ class FreeplayState extends MusicBeatState
 
 	function changeSelection(change:Int = 0)
 	{
-		if (!accepted)
+		if (!accepted && songs.length > 0)
 		{
 			if (songs.length > 1 || change == 0)
 			{
@@ -1034,7 +1034,7 @@ class FreeplayState extends MusicBeatState
 	{
 		super.stepHit();
 
-		if (songs[curSelected[freeplayType]].songName.toLowerCase() == 'imminent-demise')
+		if (songs.length > 0 && songs[curSelected[freeplayType]].songName.toLowerCase() == 'imminent-demise')
 		{
 			if (curStep == 470)
 			{
@@ -1059,7 +1059,8 @@ class FreeplayState extends MusicBeatState
 		{
 			FlxG.camera.zoom += 0.015;
 			camZoom = FlxTween.tween(FlxG.camera, {zoom: defaultZoom}, 0.1);
-			if (songs[curSelected[freeplayType]].songName.toLowerCase() == 'bad-time'
+			if (songs.length > 0 
+				&& songs[curSelected[freeplayType]].songName.toLowerCase() == 'bad-time'
 				&& curBeat % 2 == 0
 				&& !FlxG.save.data.photosensitive)
 			{
@@ -1083,33 +1084,36 @@ class FreeplayState extends MusicBeatState
 
 	function checkCustom()
 	{
-		switch (songs[curSelected[freeplayType]].songName.toLowerCase())
+		if (songs.length > 0)
 		{
-			case 'nightmare-run' | 'final-stretch' | 'burning-in-hell':
-				lockDiff = true;
-				curDifficulty = 2;
-				diffText.color = FlxColor.RED;
-				changeDiff();
+			switch (songs[curSelected[freeplayType]].songName.toLowerCase())
+			{
+				case 'nightmare-run' | 'final-stretch' | 'burning-in-hell':
+					lockDiff = true;
+					curDifficulty = 2;
+					diffText.color = FlxColor.RED;
+					changeDiff();
 
-			case 'bad-time':
-				lockDiff = true;
-				changeDiff(2, 'genocidal');
-				diffText.color = FlxColor.RED;
-				comboText.x = diffText.x + 125;
-			case 'devils-gambit':
-				lockDiff = true;
-				changeDiff(2, 'devilish');
-				diffText.color = FlxColor.RED;
-				comboText.x = diffText.x + 125;
-			case 'despair':
-				lockDiff = true;
-				changeDiff(2, 'demonic');
-				diffText.color = FlxColor.RED;
-			default:
-				lockDiff = false;
-				changeDiff();
-				diffText.color = FlxColor.WHITE;
-				comboText.x = diffText.x + 100;
+				case 'bad-time':
+					lockDiff = true;
+					changeDiff(2, 'genocidal');
+					diffText.color = FlxColor.RED;
+					comboText.x = diffText.x + 125;
+				case 'devils-gambit':
+					lockDiff = true;
+					changeDiff(2, 'devilish');
+					diffText.color = FlxColor.RED;
+					comboText.x = diffText.x + 125;
+				case 'despair':
+					lockDiff = true;
+					changeDiff(2, 'demonic');
+					diffText.color = FlxColor.RED;
+				default:
+					lockDiff = false;
+					changeDiff();
+					diffText.color = FlxColor.WHITE;
+					comboText.x = diffText.x + 100;
+			}
 		}
 	}
 }

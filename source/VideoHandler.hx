@@ -11,7 +11,7 @@ import openfl.events.Event;
 import openfl.media.Video;
 import openfl.net.NetConnection;
 import openfl.net.NetStream;
-
+import openfl.geom.Matrix;
 
 class VideoHandler {
     public var finishCallback:Void->Void;
@@ -64,26 +64,29 @@ class VideoHandler {
         netStream = new NetStream(netConnection);
 		netStream.client = meta;
 
-		trace("Using video size of " + FlxG.width + "x" + FlxG.height);
+        var width:Int = FlxG.width;
+        var height:Int = FlxG.height;
 
-        video = new Video(FlxG.width, FlxG.height);
+		trace("Using video size of " + width + "x" + height);
+
+        video = new Video(width, height);
 		netStream.play(path);
         video.attachNetStream(netStream);
 		FlxG.addChildBelowMouse(video);
-
-		onVideoReady(); // lazy, this prob works fine
-		FlxG.stage.addEventListener(Event.ENTER_FRAME, update);
-		FlxG.stage.addEventListener(Event.ENTER_FRAME, fixVolume);
 
         if (outputTo != null) {
             // display frames on a FlxSprite
 			video.alpha = 0;
             sprite = outputTo;
         }
+
+        onVideoReady(); // lazy, this prob works fine
+        FlxG.stage.addEventListener(Event.ENTER_FRAME, update);
+		FlxG.stage.addEventListener(Event.ENTER_FRAME, fixVolume);
     }
 
 	function onVideoReady() {
-    	bitmapData = new openfl.display.BitmapData(Std.int(video.width), Std.int(video.height), true, 0x00000000);
+    	bitmapData = new openfl.display.BitmapData(Std.int(sprite.width), Std.int(sprite.height), true, 0x00000000);
 
 		if (fadeFromBlack)
 		{
@@ -91,19 +94,26 @@ class VideoHandler {
 		}
 	}
 
-	private function copyFrameToSprite():Void {
+    private function copyFrameToSprite():Void {
         try {
             if (sprite != null && video != null) {
                 bitmapData.fillRect(bitmapData.rect, 0x00000000); // Clear the BitmapData
-                bitmapData.draw(video); // Draw video onto BitmapData
+                
+                var matrix:Matrix = new Matrix();
+                matrix.scale(
+                    sprite.width / video.width,  // Scale factor for width
+                    sprite.height / video.height // Scale factor for height
+                );
+                
+                bitmapData.draw(video, matrix); // Draw video onto BitmapData
                 sprite.pixels = bitmapData;
                 sprite.dirty = true; // Mark as dirty
             }
         } catch (e:Dynamic) {
-            // Handle the error
             trace('An error occurred: ' + e);
+            cleanUp();
         }
-	}
+    }
 
 	function fixVolume(e:Event)
 	{
@@ -139,7 +149,9 @@ class VideoHandler {
         });
     }
 
-    function cleanUp():Void {
+    public function cleanUp():Void {
+        FlxG.stage.removeEventListener(Event.ENTER_FRAME, update);
+        FlxG.stage.removeEventListener(Event.ENTER_FRAME, fixVolume);
         if (video != null && FlxG.game.contains(video)) {
             FlxG.game.removeChild(video);
         }

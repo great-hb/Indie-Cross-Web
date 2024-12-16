@@ -205,7 +205,7 @@ class FreeplaySelect extends MusicBeatState
 
 	function enterSelection()
 	{
-		if (FlxG.save.data.freeplaylocked[curSelected])
+		if (FlxG.save.data.freeplaylocked[curSelected] && !MainMenuState.debugTools)
 		{
 			FlxG.camera.shake(0.01);
 			FlxG.sound.play(Paths.sound("weekDeny", "shared"));

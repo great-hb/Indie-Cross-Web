@@ -1128,13 +1128,11 @@ class PlayState extends MusicBeatState
 								bg.active = false;
 								add(bg);
 
-								freakyMachineVideoSpr = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
-								freakyMachineVideoSpr.width = FlxG.width / 4;
-								freakyMachineVideoSpr.height = FlxG.height / 4;
+								freakyMachineVideoSpr = new FlxSprite().makeGraphic(Std.int(FlxG.width * 1.5), Std.int(FlxG.height * 1.5), FlxColor.WHITE);
 								add(freakyMachineVideoSpr);
 								freakyMachineVideoSpr.screenCenter();
-								freakyMachineVideoSpr.x -= 600;
-								freakyMachineVideoSpr.y -= 250;
+								freakyMachineVideoSpr.x += 150;
+								freakyMachineVideoSpr.y += 200;
 								freakyMachineVideoSpr.blend = ADD;
 								freakyMachineVideoSpr.alpha = 0.0001;
 

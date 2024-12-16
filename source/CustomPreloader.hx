@@ -25,6 +25,8 @@ class CustomPreloader extends FlxBasePreloader
 {
 	// must specify since its not accurate idk why
 	// i literally have no idea it should work but idk what im doing either
+	// around 295000000 is good for compressed assets (it might be different depending on your compression settings)
+	// around 880000000 is good for non-compressed assets
 	var _gameSizeBytes:Int = 294525854;
 
 	var _buffer:Sprite;
