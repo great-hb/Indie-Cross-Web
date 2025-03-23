@@ -59,7 +59,7 @@ This game was made with love to Newgrounds and its community. Extra love to Tom 
 # Installation (if you want to compress assets)
 1. [Install Python 3](https://www.python.org/downloads/)
 2. Install Pillow: `pip3 install Pillow`
-3. Install and add ffmpeg to your PATH (figure it out)
+3. Install and add ffmpeg to your PATH
 
 # Build (no compression)
 1. Change `_gameSizeBytes` in `CustomPreloader.hx` so the loading bar is correct (idk how to fix)
